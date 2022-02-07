@@ -10,8 +10,9 @@ class WebCrawlerSpider(scrapy.Spider):
         property_links = response.xpath("//a[@aria-label='Listing link']")
         yield from response.follow_all(property_links, self.parse_property)
 
-        # pagination_links = response.css('li.next a')
-        # yield from response.follow_all(pagination_links, self.parse)
+        pagination_links = response.xpath("//a[@title='Next']/@href").get()
+        if pagination_links is not None:
+            yield response.follow(pagination_links, self.parse)
 
     def parse_property(self, response):
         def extract_with_xpath(query):
@@ -34,6 +35,7 @@ class WebCrawlerSpider(scrapy.Spider):
             'image_url': response.xpath('//div[@aria-label="Property image"]/div/picture/source/@srcset').extract(),
             'breadcrumbs': " > ".join(response.xpath('//span[@aria-label="Link name"]/text()').extract()),
             'amenities': response.xpath('//h3["Features / Amenities"]/following-sibling::div/div/div[2]/span/text()').extract(),
+            'description': extract_with_xpath('//div[@aria-label="Property description"]/div/span')
 
             
         }

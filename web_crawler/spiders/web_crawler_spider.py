@@ -29,11 +29,11 @@ class WebCrawlerSpider(scrapy.Spider):
                     "bathrooms": extract_with_xpath('//span[@aria-label="Baths"]/span'), 
                     "size": extract_with_xpath('//span[@aria-label="Area"]/span/span')
                     },
-            'permit_number': extract_with_xpath('//div[@aria-label="Agency info"]/div/div[2]/span[3]'),
-            'agent_name': extract_with_xpath('//div[@aria-label="Agency info"]/div/div[3]'),
+            'permit_number': response.xpath('//div[@aria-label="Agency info"]/div/div[2]/span[3]/text()[3]').get(),
+            'agent_name': extract_with_xpath('//a[@aria-label="Agent name"]'),
             'image_url': response.xpath('//div[@aria-label="Property image"]/div/picture/source/@srcset').extract(),
-            'breadcrumbs': response.xpath('//span[@aria-label="Link name"]').extract(),
-            'amenities': response.xpath('//h3["Features / Amenities"]/following-sibling::div/div/div[2]/span').extract(),
+            'breadcrumbs': " > ".join(response.xpath('//span[@aria-label="Link name"]/text()').extract()),
+            'amenities': response.xpath('//h3["Features / Amenities"]/following-sibling::div/div/div[2]/span/text()').extract(),
 
             
         }
